@@ -1,0 +1,23 @@
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  users: defineTable({
+    tokenIdentifier: v.string(),
+    name: v.optional(v.string()),
+    email: v.optional(v.string()),
+    isAdmin: v.optional(v.boolean()),
+    adminUserId: v.optional(v.string()), // "aditya" | "subhajit"
+  }).index("by_token", ["tokenIdentifier"]),
+
+  // Content managed by admins: announcements, offers, discounts, posters per service
+  content: defineTable({
+    serviceId: v.string(), // "internship" | "training" | "websites" | "custom-websites" | "ai-agents" | "mobile-apps" | "general"
+    type: v.string(), // "announcement" | "offer" | "discount" | "poster" | "image" | "video" | "link"
+    title: v.string(),
+    body: v.optional(v.string()),
+    url: v.optional(v.string()), // image/video/link url
+    createdBy: v.string(), // admin name
+    order: v.optional(v.number()),
+  }).index("by_service", ["serviceId"]),
+});

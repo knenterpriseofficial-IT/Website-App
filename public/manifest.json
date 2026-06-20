@@ -1,0 +1,57 @@
+{
+  "name": "K&N Enterprises",
+  "short_name": "K&N Tech",
+  "description": "K&N Enterprises — Internships, Industrial Trainings, Website Development, App Development & IT Solutions. Empowering Ideas Through Technology.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0d0f1a",
+  "theme_color": "#c9a227",
+  "orientation": "portrait-primary",
+  "categories": ["business", "education", "productivity"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/icon/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Our Services",
+      "short_name": "Services",
+      "description": "Browse K&N Enterprises services",
+      "url": "/#services",
+      "icons": [{ "src": "/icon/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "About Us",
+      "short_name": "About",
+      "description": "Learn about K&N Enterprises",
+      "url": "/#about",
+      "icons": [{ "src": "/icon/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}

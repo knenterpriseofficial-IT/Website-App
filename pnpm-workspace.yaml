@@ -1,0 +1,13 @@
+packages:
+  - .
+
+allowBuilds:
+  "@swc/core": true
+  "@tailwindcss/oxide": true
+  esbuild: true
+
+blockExoticSubdeps: true
+
+minimumReleaseAge: 4320
+minimumReleaseAgeExclude:
+  - "@usehercules/*"

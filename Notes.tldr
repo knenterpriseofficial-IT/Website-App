@@ -1,0 +1,3 @@
+
+1 Frontend → pnpm run dev        (Frontend - Vite on port 5173)
+2 Backend  → npx convex dev      (Backend  - Convex on port 3210)
