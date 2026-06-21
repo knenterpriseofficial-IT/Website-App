@@ -34,6 +34,13 @@ async function requireAdmin(ctx: MutationCtx) {
   return user;
 }
 
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
 export const addContent = mutation({
   args: {
     serviceId: v.string(),
@@ -41,11 +48,40 @@ export const addContent = mutation({
     title: v.string(),
     body: v.optional(v.string()),
     url: v.optional(v.string()),
+    links: v.optional(v.array(v.string())),
+    images: v.optional(v.array(v.string())),
+    videos: v.optional(v.array(v.string())),
+    imageStorageIds: v.optional(v.array(v.string())),
+    videoStorageIds: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args): Promise<string> => {
     const user = await requireAdmin(ctx);
+
+    const resolvedImages = [...(args.images ?? [])];
+    if (args.imageStorageIds) {
+      for (const id of args.imageStorageIds) {
+        const url = await ctx.storage.getUrl(id as any);
+        if (url) resolvedImages.push(url);
+      }
+    }
+
+    const resolvedVideos = [...(args.videos ?? [])];
+    if (args.videoStorageIds) {
+      for (const id of args.videoStorageIds) {
+        const url = await ctx.storage.getUrl(id as any);
+        if (url) resolvedVideos.push(url);
+      }
+    }
+
     const id = await ctx.db.insert("content", {
-      ...args,
+      serviceId: args.serviceId,
+      type: args.type,
+      title: args.title,
+      body: args.body,
+      url: args.url,
+      links: args.links,
+      images: resolvedImages.length > 0 ? resolvedImages : undefined,
+      videos: resolvedVideos.length > 0 ? resolvedVideos : undefined,
       createdBy: user.name ?? "Admin",
     });
 
@@ -91,14 +127,44 @@ export const addContentNoAuth = mutation({
     title: v.string(),
     body: v.optional(v.string()),
     url: v.optional(v.string()),
+    links: v.optional(v.array(v.string())),
+    images: v.optional(v.array(v.string())),
+    videos: v.optional(v.array(v.string())),
+    imageStorageIds: v.optional(v.array(v.string())),
+    videoStorageIds: v.optional(v.array(v.string())),
     adminName: v.string(),
   },
   handler: async (ctx, args): Promise<string> => {
-    const { adminName, ...rest } = args;
+    const { adminName } = args;
+
+    const resolvedImages = [...(args.images ?? [])];
+    if (args.imageStorageIds) {
+      for (const id of args.imageStorageIds) {
+        const url = await ctx.storage.getUrl(id as any);
+        if (url) resolvedImages.push(url);
+      }
+    }
+
+    const resolvedVideos = [...(args.videos ?? [])];
+    if (args.videoStorageIds) {
+      for (const id of args.videoStorageIds) {
+        const url = await ctx.storage.getUrl(id as any);
+        if (url) resolvedVideos.push(url);
+      }
+    }
+
     const id = await ctx.db.insert("content", {
-      ...rest,
+      serviceId: args.serviceId,
+      type: args.type,
+      title: args.title,
+      body: args.body,
+      url: args.url,
+      links: args.links,
+      images: resolvedImages.length > 0 ? resolvedImages : undefined,
+      videos: resolvedVideos.length > 0 ? resolvedVideos : undefined,
       createdBy: adminName,
     });
+
     await ctx.scheduler.runAfter(0, internal.emails.sendAdminChangeNotification, {
       action: "added",
       adminName,
@@ -134,10 +200,40 @@ export const updateContent = mutation({
     title: v.optional(v.string()),
     body: v.optional(v.string()),
     url: v.optional(v.string()),
+    links: v.optional(v.array(v.string())),
+    images: v.optional(v.array(v.string())),
+    videos: v.optional(v.array(v.string())),
+    imageStorageIds: v.optional(v.array(v.string())),
+    videoStorageIds: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args): Promise<null> => {
     const user = await requireAdmin(ctx);
     const { id, ...updates } = args;
+
+    const resolvedImages = updates.images ? [...updates.images] : undefined;
+    if (updates.imageStorageIds) {
+      const imagesList = resolvedImages ?? [];
+      for (const storageId of updates.imageStorageIds) {
+        const url = await ctx.storage.getUrl(storageId as any);
+        if (url) imagesList.push(url);
+      }
+      updates.images = imagesList;
+    }
+
+    const resolvedVideos = updates.videos ? [...updates.videos] : undefined;
+    if (updates.videoStorageIds) {
+      const videosList = resolvedVideos ?? [];
+      for (const storageId of updates.videoStorageIds) {
+        const url = await ctx.storage.getUrl(storageId as any);
+        if (url) videosList.push(url);
+      }
+      updates.videos = videosList;
+    }
+
+    // Delete temporary keys from updates to match schema
+    delete (updates as any).imageStorageIds;
+    delete (updates as any).videoStorageIds;
+
     const item = await ctx.db.get(id);
     await ctx.db.patch(id, updates);
 

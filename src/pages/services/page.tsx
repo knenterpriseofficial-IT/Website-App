@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, GraduationCap, BookOpen, Globe, Code2, Bot, Smartphone, CheckCircle2, ExternalLink, Image, Video, Link2, Tag, Megaphone, Plus, Trash2, Shield } from "lucide-react";
+import { ArrowLeft, GraduationCap, BookOpen, Globe, Code2, Bot, Smartphone, CheckCircle2, ExternalLink, Image, Video, Link2, Tag, Megaphone, Plus, Trash2, Shield, Upload, X, File, Film, Bell, Gift, Percent } from "lucide-react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api.js";
 import type { Doc, Id } from "@/convex/_generated/dataModel.d.ts";
@@ -39,13 +39,13 @@ const SERVICE_DATA: Record<string, {
       "Duration: 1 Month power-packed program",
       "Verified Internship Experience Certificate upon completion",
       "NOC (No Objection Certificate) provided if required",
-      "Registration Fee: ₹500 only",
+      "Seats: Limited seats available for the current batch",
     ],
     extra: (
       <div className="mt-6 p-5 rounded-2xl bg-primary/10 border border-primary/30 text-center">
-        <div className="text-2xl font-black text-primary mb-1">Registration Fee</div>
-        <div className="text-5xl font-black text-primary">₹500</div>
-        <div className="text-muted-foreground mt-2 text-sm">1-Month Internship Program</div>
+        <div className="text-2xl font-black text-primary mb-1">Program Status</div>
+        <div className="text-4xl font-black text-primary">Enrollment Open</div>
+        <div className="text-muted-foreground mt-2 text-sm">Limited seats available for the current batch. Apply today!</div>
       </div>
     ),
   },
@@ -73,23 +73,23 @@ const SERVICE_DATA: Record<string, {
               <th className="text-left p-3">SL.</th>
               <th className="text-left p-3">Internship & Training Track</th>
               <th className="text-left p-3">Duration</th>
-              <th className="text-left p-3">Price (₹)</th>
+              <th className="text-left p-3">Focus Outcome</th>
             </tr>
           </thead>
           <tbody>
             {[
-              ["1", "Web Development (HTML, CSS, JS)", "1 Month", "2k"],
-              ["2", "Python", "1 Month", "2.5k"],
-              ["3", "Django", "1 Month", "3k"],
-              ["4", "Frontend Development (HTML, Bootstrap, JS, Advanced AI use)", "1 Month", "2.5k"],
-              ["5", "Advanced AI Use & Backend Development (C/Python) optional", "1 Month", "3k"],
-              ["6", "Full Stack Development (Frontend+Backend+Database+AI)", "1 Month", "3.5k"],
-            ].map(([sl, track, dur, price]) => (
+              ["1", "Web Development (HTML, CSS, JS)", "1 Month", "Responsive UI Project & Live Hosting"],
+              ["2", "Python", "1 Month", "Core Concepts, OOP & Automation Scripting"],
+              ["3", "Django", "1 Month", "REST APIs, Databases & Admin Dashboard"],
+              ["4", "Frontend Development (HTML, Bootstrap, JS, Advanced AI use)", "1 Month", "Modern Responsive Sites & AI Tool Assisted Coding"],
+              ["5", "Advanced AI Use & Backend Development (C/Python) optional", "1 Month", "AI Pipelines, Algorithms & Backend Integration"],
+              ["6", "Full Stack Development (Frontend+Backend+Database+AI)", "1 Month", "End-to-End SaaS App, Database & AI Agent Setup"],
+            ].map(([sl, track, dur, outcome]) => (
               <tr key={sl} className="border-t border-border hover:bg-card/60 transition-colors">
                 <td className="p-3 text-muted-foreground">{sl}.</td>
                 <td className="p-3 font-medium">{track}</td>
                 <td className="p-3 text-muted-foreground">{dur}</td>
-                <td className="p-3 font-bold text-primary">₹{price}</td>
+                <td className="p-3 font-bold text-primary">{outcome}</td>
               </tr>
             ))}
           </tbody>
@@ -167,15 +167,268 @@ const SERVICE_DATA: Record<string, {
   },
 };
 
-const TYPE_ICONS: Record<string, React.ElementType> = {
-  announcement: Megaphone,
-  offer: Tag,
-  discount: Tag,
-  poster: Image,
-  image: Image,
-  video: Video,
-  link: Link2,
-};
+export function UpdateCard({ item, onDelete, showDelete }: {
+  item: Doc<"content">;
+  onDelete: (id: Id<"content">) => void;
+  showDelete: boolean;
+}) {
+  if (item.type === "announcement") {
+    return (
+      <motion.div
+        initial={{ x: -20, opacity: 0 }}
+        whileInView={{ x: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        whileHover={{ scale: 1.01, boxShadow: "0 0 20px rgba(6,182,212,0.15)" }}
+        className="relative overflow-hidden p-5 rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-950/20 via-blue-950/10 to-slate-900/40 backdrop-blur-sm"
+      >
+        <div className="absolute top-0 right-0 h-32 w-32 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex items-start gap-4">
+          <div className="relative p-3 rounded-xl bg-cyan-500/10 text-cyan-400 shrink-0">
+            <motion.div
+              animate={{ scale: [1, 1.25, 1], opacity: [0.6, 0.2, 0.6] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+              className="absolute inset-0 rounded-xl bg-cyan-400/20"
+            />
+            <motion.div
+              animate={{ rotate: [-8, 8, -8] }}
+              transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+            >
+              <Bell className="h-5 w-5" />
+            </motion.div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <h3 className="font-extrabold text-lg text-cyan-300">{item.title}</h3>
+              <Badge className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[10px] uppercase font-bold tracking-wider shrink-0">
+                Announcement
+              </Badge>
+            </div>
+            {item.body && <p className="text-sm text-slate-350 leading-relaxed mb-3">{item.body}</p>}
+            
+            {item.links && item.links.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {item.links.map((link, idx) => (
+                  <a
+                    key={idx}
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/20 hover:border-cyan-400 text-cyan-400 px-3.5 py-1.5 rounded-full transition-all"
+                  >
+                    <ExternalLink className="h-3 w-3" /> Visit Link
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+          {showDelete && (
+            <button
+              onClick={() => onDelete(item._id)}
+              className="shrink-0 p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (item.type === "offer") {
+    return (
+      <motion.div
+        initial={{ scale: 0.96, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        whileHover={{ scale: 1.01, boxShadow: "0 0 20px rgba(16,185,129,0.15)" }}
+        className="relative overflow-hidden p-5 rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 via-teal-950/10 to-slate-900/40 backdrop-blur-sm"
+      >
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes shimmer {
+            100% { transform: translateX(100%); }
+          }
+        `}} />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent -translate-x-full animate-[shimmer_3s_infinite] pointer-events-none" />
+        <div className="flex items-start gap-4">
+          <div className="relative p-3 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
+            <motion.div
+              animate={{ y: [0, -4, 0] }}
+              transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+            >
+              <Gift className="h-5 w-5" />
+            </motion.div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <h3 className="font-extrabold text-lg text-emerald-300">{item.title}</h3>
+              <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] uppercase font-bold tracking-wider shrink-0">
+                Special Offer
+              </Badge>
+            </div>
+            {item.body && <p className="text-sm text-slate-350 leading-relaxed mb-3">{item.body}</p>}
+            
+            {item.links && item.links.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {item.links.map((link, idx) => (
+                  <a
+                    key={idx}
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 hover:border-emerald-400 text-emerald-400 px-3.5 py-1.5 rounded-full transition-all"
+                  >
+                    <ExternalLink className="h-3 w-3" /> Grab Offer
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+          {showDelete && (
+            <button
+              onClick={() => onDelete(item._id)}
+              className="shrink-0 p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (item.type === "discount") {
+    return (
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        whileHover={{ scale: 1.01, boxShadow: "0 0 20px rgba(245,158,11,0.2)" }}
+        className="relative overflow-hidden p-5 rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/20 via-orange-950/10 to-slate-900/40 backdrop-blur-sm"
+      >
+        <div className="flex items-start gap-4">
+          <div className="relative p-3 rounded-xl bg-amber-500/10 text-amber-400 shrink-0">
+            <motion.div
+              animate={{ rotate: [-12, 12, -12] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            >
+              <Percent className="h-5 w-5" />
+            </motion.div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <h3 className="font-extrabold text-lg text-amber-300">{item.title}</h3>
+              <Badge className="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] uppercase font-bold tracking-wider shrink-0">
+                Discount
+              </Badge>
+            </div>
+            {item.body && <p className="text-sm text-slate-350 leading-relaxed mb-3">{item.body}</p>}
+            
+            {item.links && item.links.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {item.links.map((link, idx) => (
+                  <a
+                    key={idx}
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 hover:border-amber-400 text-amber-400 px-3.5 py-1.5 rounded-full transition-all"
+                  >
+                    <ExternalLink className="h-3 w-3" /> Claim Discount
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+          {showDelete && (
+            <button
+              onClick={() => onDelete(item._id)}
+              className="shrink-0 p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Post Card
+  return (
+    <motion.div
+      initial={{ y: 20, opacity: 0 }}
+      whileInView={{ y: 0, opacity: 1 }}
+      viewport={{ once: true }}
+      whileHover={{ scale: 1.01, boxShadow: "0 0 25px rgba(168,85,247,0.15)" }}
+      className="relative overflow-hidden p-5 rounded-2xl border border-purple-500/30 bg-gradient-to-br from-purple-950/10 via-slate-900/30 to-indigo-950/15 backdrop-blur-sm"
+    >
+      <div className="flex items-start gap-4">
+        <div className="relative p-3 rounded-xl bg-purple-500/10 text-purple-400 shrink-0">
+          <Image className="h-5 w-5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <h3 className="font-extrabold text-lg text-purple-300">{item.title}</h3>
+            <Badge className="bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] uppercase font-bold tracking-wider shrink-0">
+              Post
+            </Badge>
+          </div>
+          {item.body && <p className="text-sm text-slate-350 leading-relaxed mb-3">{item.body}</p>}
+          
+          {/* Multiple Images */}
+          {item.images && item.images.length > 0 && (
+            <div className={`grid gap-2.5 mt-3 ${item.images.length === 1 ? "grid-cols-1" : item.images.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+              {item.images.map((img, idx) => (
+                <motion.div
+                  key={idx}
+                  whileHover={{ scale: 1.03 }}
+                  className="relative aspect-video rounded-xl overflow-hidden border border-border/40 bg-black cursor-zoom-in"
+                  onClick={() => window.open(img, "_blank")}
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* Multiple Videos */}
+          {item.videos && item.videos.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+              {item.videos.map((vid, idx) => (
+                <div key={idx} className="relative rounded-xl overflow-hidden border border-border/40 bg-black">
+                  <video src={vid} controls className="w-full max-h-64 object-contain" />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {item.links && item.links.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {item.links.map((link, idx) => (
+                <a
+                  key={idx}
+                  href={link}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 hover:border-purple-400 text-purple-400 px-3.5 py-1.5 rounded-full transition-all"
+                >
+                  <ExternalLink className="h-3 w-3" /> View Link
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+        {showDelete && (
+          <button
+            onClick={() => onDelete(item._id)}
+            className="shrink-0 p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+    </motion.div>
+  );
+}
 
 export default function ServicePage() {
   const { id } = useParams<{ id: string }>();
@@ -185,40 +438,149 @@ export default function ServicePage() {
   const { session } = useAdmin();
 
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ type: "announcement", title: "", body: "", url: "" });
   const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState({ type: "announcement", title: "", body: "" });
+  const [links, setLinks] = useState<string[]>([]);
+  const [newLink, setNewLink] = useState("");
+
+  const [pastedImages, setPastedImages] = useState<string[]>([]);
+  const [newImage, setNewImage] = useState("");
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+
+  const [pastedVideos, setPastedVideos] = useState<string[]>([]);
+  const [newVideo, setNewVideo] = useState("");
+  const [videoFiles, setVideoFiles] = useState<File[]>([]);
 
   const contentItems = useQuery(api.content.listByService, { serviceId });
   const addContent = useMutation(api.content.addContentNoAuth);
   const deleteContent = useMutation(api.content.deleteContentNoAuth);
+  const generateUploadUrl = useMutation(api.content.generateUploadUrl);
 
   const CONTENT_TYPES = [
     { value: "announcement", label: "Announcement" },
     { value: "offer", label: "Offer" },
     { value: "discount", label: "Discount" },
-    { value: "image", label: "Image" },
-    { value: "video", label: "Video" },
-    { value: "link", label: "Link" },
-    { value: "poster", label: "Poster" },
+    { value: "post", label: "Post" },
   ];
+
+  const handleAddLink = () => {
+    if (newLink.trim()) {
+      let formatted = newLink.trim();
+      if (!formatted.startsWith("http://") && !formatted.startsWith("https://")) {
+        formatted = "https://" + formatted;
+      }
+      setLinks([...links, formatted]);
+      setNewLink("");
+    }
+  };
+
+  const handleRemoveLink = (index: number) => {
+    setLinks(links.filter((_, i) => i !== index));
+  };
+
+  const handleAddPastedImage = () => {
+    if (newImage.trim()) {
+      setPastedImages([...pastedImages, newImage.trim()]);
+      setNewImage("");
+    }
+  };
+
+  const handleRemovePastedImage = (index: number) => {
+    setPastedImages(pastedImages.filter((_, i) => i !== index));
+  };
+
+  const handleAddImageFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImageFiles([...imageFiles, ...Array.from(e.target.files)]);
+    }
+  };
+
+  const handleRemoveImageFile = (index: number) => {
+    setImageFiles(imageFiles.filter((_, i) => i !== index));
+  };
+
+  const handleAddPastedVideo = () => {
+    if (newVideo.trim()) {
+      setPastedVideos([...pastedVideos, newVideo.trim()]);
+      setNewVideo("");
+    }
+  };
+
+  const handleRemovePastedVideo = (index: number) => {
+    setPastedVideos(pastedVideos.filter((_, i) => i !== index));
+  };
+
+  const handleAddVideoFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setVideoFiles([...videoFiles, ...Array.from(e.target.files)]);
+    }
+  };
+
+  const handleRemoveVideoFile = (index: number) => {
+    setVideoFiles(videoFiles.filter((_, i) => i !== index));
+  };
 
   const handleAdd = async () => {
     if (!form.title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     try {
+      // 1. Upload files
+      const imageStorageIds: string[] = [];
+      for (const file of imageFiles) {
+        const uploadUrl = await generateUploadUrl();
+        const res = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+        if (!res.ok) throw new Error("Failed to upload image file");
+        const { storageId } = await res.json();
+        imageStorageIds.push(storageId);
+      }
+
+      const videoStorageIds: string[] = [];
+      for (const file of videoFiles) {
+        const uploadUrl = await generateUploadUrl();
+        const res = await fetch(uploadUrl, {
+          method: "POST",
+          headers: { "Content-Type": file.type },
+          body: file,
+        });
+        if (!res.ok) throw new Error("Failed to upload video file");
+        const { storageId } = await res.json();
+        videoStorageIds.push(storageId);
+      }
+
+      // 2. Save content
       await addContent({
         serviceId,
         type: form.type,
         title: form.title,
         body: form.body || undefined,
-        url: form.url || undefined,
+        links: links.length > 0 ? links : undefined,
+        images: pastedImages.length > 0 ? pastedImages : undefined,
+        videos: pastedVideos.length > 0 ? pastedVideos : undefined,
+        imageStorageIds: imageStorageIds.length > 0 ? imageStorageIds : undefined,
+        videoStorageIds: videoStorageIds.length > 0 ? videoStorageIds : undefined,
         adminName: session?.name ?? "Admin",
       });
-      toast.success("Content added!");
-      setForm({ type: "announcement", title: "", body: "", url: "" });
+
+      toast.success("Content added successfully!");
+      // Reset
+      setForm({ type: "announcement", title: "", body: "" });
+      setLinks([]);
+      setNewLink("");
+      setPastedImages([]);
+      setNewImage("");
+      setImageFiles([]);
+      setPastedVideos([]);
+      setNewVideo("");
+      setVideoFiles([]);
       setAdding(false);
-    } catch {
-      toast.error("Failed to add content");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to add content");
     } finally {
       setSaving(false);
     }
@@ -316,48 +678,14 @@ export default function ServicePage() {
             >
               <h2 className="text-2xl font-bold mb-6">Latest Updates &amp; Offers</h2>
               <div className="space-y-4">
-                {contentItems.map((item: Doc<"content">) => {
-                  const TypeIcon = TYPE_ICONS[item.type] ?? Megaphone;
-                  return (
-                    <Card key={item._id} className="border border-primary/20 bg-card">
-                      <CardContent className="p-5">
-                        <div className="flex items-start gap-3">
-                          <TypeIcon className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
-                              <span className="font-semibold">{item.title}</span>
-                              <Badge variant="secondary" className="text-xs capitalize">{item.type}</Badge>
-                            </div>
-                            {item.body && <p className="text-sm text-muted-foreground mb-3">{item.body}</p>}
-                            {item.url && (
-                              <div>
-                                {(item.type === "image" || item.type === "poster") ? (
-                                  <img src={item.url} alt={item.title} className="rounded-xl max-h-64 object-cover" />
-                                ) : item.type === "video" ? (
-                                  <video src={item.url} controls className="rounded-xl max-h-64 w-full" />
-                                ) : (
-                                  <a href={item.url} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-primary text-sm hover:underline">
-                                    <ExternalLink className="h-3.5 w-3.5" /> {item.url}
-                                  </a>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          {/* Admin delete button */}
-                          {session && (
-                            <button
-                              onClick={() => handleDelete(item._id)}
-                              className="shrink-0 p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
-                              title="Delete"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+                {contentItems.map((item: Doc<"content">) => (
+                  <UpdateCard
+                    key={item._id}
+                    item={item}
+                    onDelete={handleDelete}
+                    showDelete={!!session}
+                  />
+                ))}
               </div>
             </motion.div>
           )}
@@ -376,10 +704,10 @@ export default function ServicePage() {
               </div>
 
               {adding ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div>
                     <Label className="text-xs mb-1 block">Content Type</Label>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {CONTENT_TYPES.map((t) => (
                         <button
                           key={t.value}
@@ -395,32 +723,176 @@ export default function ServicePage() {
                       ))}
                     </div>
                   </div>
+
                   <div>
                     <Label className="text-xs mb-1 block">Title *</Label>
                     <Input placeholder="Enter a title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
                   </div>
+
                   <div>
                     <Label className="text-xs mb-1 block">Description (optional)</Label>
                     <Input placeholder="Details, offer text, etc." value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} />
                   </div>
-                  <div>
-                    <Label className="text-xs mb-1 block">
-                      {form.type === "image" || form.type === "poster" ? "Image URL" : form.type === "video" ? "Video URL" : "URL / Link (optional)"}
-                    </Label>
-                    <Input
-                      placeholder="https://..."
-                      value={form.url}
-                      onChange={(e) => setForm({ ...form, url: e.target.value })}
-                    />
-                    {(form.type === "image" || form.type === "poster") && (
-                      <p className="text-xs text-muted-foreground mt-1">Paste a direct image URL from any source</p>
+
+                  {/* Multiple Links Option */}
+                  <div className="space-y-2">
+                    <Label className="text-xs block">Links (Add multiple links)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="https://example.com"
+                        value={newLink}
+                        onChange={(e) => setNewLink(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddLink())}
+                      />
+                      <Button type="button" onClick={handleAddLink} size="sm" variant="secondary" className="cursor-pointer">
+                        Add
+                      </Button>
+                    </div>
+                    {links.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-secondary/20 border border-border">
+                        {links.map((lnk, i) => (
+                          <Badge key={i} variant="secondary" className="flex items-center gap-1 text-xs">
+                            <span className="truncate max-w-[150px]">{lnk}</span>
+                            <X className="h-3 w-3 cursor-pointer text-destructive hover:scale-110" onClick={() => handleRemoveLink(i)} />
+                          </Badge>
+                        ))}
+                      </div>
                     )}
                   </div>
-                  <div className="flex gap-2 pt-1">
+
+                  {/* Image & Video Upload Options (only for POST type) */}
+                  {form.type === "post" && (
+                    <div className="space-y-4 pt-2 border-t border-border/60">
+                      {/* Images upload */}
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold text-primary block">Images (Upload Multiple)</Label>
+                        
+                        {/* Paste Image URL option */}
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Paste image URL (https://...)"
+                            value={newImage}
+                            onChange={(e) => setNewImage(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddPastedImage())}
+                          />
+                          <Button type="button" onClick={handleAddPastedImage} size="sm" variant="secondary" className="cursor-pointer">
+                            Add URL
+                          </Button>
+                        </div>
+
+                        {/* Local Image Upload option */}
+                        <div className="flex items-center justify-center w-full">
+                          <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg border-border hover:border-primary/50 bg-secondary/20 cursor-pointer transition-colors">
+                            <div className="flex flex-col items-center justify-center pt-3 pb-3">
+                              <Upload className="w-6 h-6 text-muted-foreground mb-1" />
+                              <p className="text-xs text-muted-foreground"><span className="font-semibold">Click to upload images</span></p>
+                            </div>
+                            <input type="file" multiple accept="image/*" className="hidden" onChange={handleAddImageFile} />
+                          </label>
+                        </div>
+
+                        {/* Image Previews */}
+                        {(pastedImages.length > 0 || imageFiles.length > 0) && (
+                          <div className="grid grid-cols-4 gap-2 p-2 rounded-lg bg-secondary/20 border border-border">
+                            {pastedImages.map((img, i) => (
+                              <div key={`pasted-${i}`} className="relative group aspect-square rounded-md overflow-hidden border border-border bg-black">
+                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                <button
+                                  type="button"
+                                  className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground hover:scale-110 cursor-pointer"
+                                  onClick={() => handleRemovePastedImage(i)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                                <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-[8px] text-center text-white py-0.5 truncate px-1">URL</span>
+                              </div>
+                            ))}
+                            {imageFiles.map((file, i) => {
+                              const fileUrl = URL.createObjectURL(file);
+                              return (
+                                <div key={`file-${i}`} className="relative group aspect-square rounded-md overflow-hidden border border-border bg-black">
+                                  <img src={fileUrl} alt="" className="w-full h-full object-cover" />
+                                  <button
+                                    type="button"
+                                    className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground hover:scale-110 cursor-pointer"
+                                    onClick={() => handleRemoveImageFile(i)}
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                  <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-[8px] text-center text-white py-0.5 truncate px-1">{file.name}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Videos upload */}
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold text-primary block">Videos (Upload Multiple)</Label>
+
+                        {/* Paste Video URL option */}
+                        <div className="flex gap-2">
+                          <Input
+                            placeholder="Paste video URL (https://...)"
+                            value={newVideo}
+                            onChange={(e) => setNewVideo(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddPastedVideo())}
+                          />
+                          <Button type="button" onClick={handleAddPastedVideo} size="sm" variant="secondary" className="cursor-pointer">
+                            Add URL
+                          </Button>
+                        </div>
+
+                        {/* Local Video Upload option */}
+                        <div className="flex items-center justify-center w-full">
+                          <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg border-border hover:border-primary/50 bg-secondary/20 cursor-pointer transition-colors">
+                            <div className="flex flex-col items-center justify-center pt-3 pb-3">
+                              <Film className="w-6 h-6 text-muted-foreground mb-1" />
+                              <p className="text-xs text-muted-foreground"><span className="font-semibold">Click to upload videos</span></p>
+                            </div>
+                            <input type="file" multiple accept="video/*" className="hidden" onChange={handleAddVideoFile} />
+                          </label>
+                        </div>
+
+                        {/* Video Files & Previews list */}
+                        {(pastedVideos.length > 0 || videoFiles.length > 0) && (
+                          <div className="space-y-1.5 p-2 rounded-lg bg-secondary/20 border border-border">
+                            {pastedVideos.map((vid, i) => (
+                              <div key={`pasted-vid-${i}`} className="flex items-center justify-between text-xs p-1.5 rounded bg-card border border-border">
+                                <span className="truncate flex-1 text-muted-foreground">🔗 {vid}</span>
+                                <button type="button" onClick={() => handleRemovePastedVideo(i)} className="text-destructive hover:scale-105 ml-2 cursor-pointer">
+                                  <X className="h-4 w-4" />
+                                </button>
+                              </div>
+                            ))}
+                            {videoFiles.map((file, i) => (
+                              <div key={`file-vid-${i}`} className="flex items-center justify-between text-xs p-1.5 rounded bg-card border border-border">
+                                <span className="truncate flex-1 font-medium">📄 {file.name} ({(file.size / 1024 / 1024).toFixed(1)} MB)</span>
+                                <button type="button" onClick={() => handleRemoveVideoFile(i)} className="text-destructive hover:scale-105 ml-2 cursor-pointer">
+                                  <X className="h-4 w-4" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 pt-2 border-t border-border/40">
                     <Button onClick={handleAdd} disabled={saving} className="cursor-pointer">
-                      {saving ? "Saving..." : "Save Content"}
+                      {saving ? "Uploading & Saving..." : "Save Content"}
                     </Button>
-                    <Button variant="ghost" onClick={() => { setAdding(false); setForm({ type: "announcement", title: "", body: "", url: "" }); }} className="cursor-pointer">
+                    <Button variant="ghost" onClick={() => {
+                      setAdding(false);
+                      setForm({ type: "announcement", title: "", body: "" });
+                      setLinks([]);
+                      setPastedImages([]);
+                      setImageFiles([]);
+                      setPastedVideos([]);
+                      setVideoFiles([]);
+                    }} className="cursor-pointer">
                       Cancel
                     </Button>
                   </div>

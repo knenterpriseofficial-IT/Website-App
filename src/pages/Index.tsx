@@ -4,6 +4,9 @@ import {
   GraduationCap, BookOpen, Globe, Code2, Bot, Smartphone,
   MapPin, Phone, Mail, ChevronRight, Award, Building2, Star } from
 "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api.js";
+import { UpdateCard } from "./services/page.tsx";
 import ParticleBackground from "@/components/particle-background.tsx";
 import Navbar from "@/components/navbar.tsx";
 import Footer from "@/components/footer.tsx";
@@ -11,67 +14,67 @@ import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 
 const SERVICES = [
-{
-  id: "internship",
-  icon: GraduationCap,
-  title: "Internships",
-  desc: "1-month immersive programs with real-world projects, mentorship, and verified experience certificates.",
-  color: "from-yellow-500/20 to-yellow-600/5",
-  accent: "text-yellow-400",
-  badge: "₹500 Registration"
-},
-{
-  id: "training",
-  icon: BookOpen,
-  title: "Industrial Training",
-  desc: "Online classes, study notes, project-based learning, and certificates recognized by industry.",
-  color: "from-blue-500/20 to-blue-600/5",
-  accent: "text-blue-400",
-  badge: "From ₹2,000"
-},
-{
-  id: "websites",
-  icon: Globe,
-  title: "Ready-made Websites",
-  desc: "Pre-built, professionally designed websites ready to deploy for your business needs.",
-  color: "from-green-500/20 to-green-600/5",
-  accent: "text-green-400",
-  badge: "Instant Deploy"
-},
-{
-  id: "custom-websites",
-  icon: Code2,
-  title: "Custom Websites",
-  desc: "Order-based web development tailored to your exact requirements and brand identity.",
-  color: "from-purple-500/20 to-purple-600/5",
-  accent: "text-purple-400",
-  badge: "Made to Order"
-},
-{
-  id: "ai-agents",
-  icon: Bot,
-  title: "AI Agents",
-  desc: "Build intelligent AI agents and automation systems to power your business workflows.",
-  color: "from-red-500/20 to-red-600/5",
-  accent: "text-red-400",
-  badge: "Cutting Edge"
-},
-{
-  id: "mobile-apps",
-  icon: Smartphone,
-  title: "Mobile Apps",
-  desc: "Cross-platform mobile applications built with modern tech stacks for iOS and Android.",
-  color: "from-pink-500/20 to-pink-600/5",
-  accent: "text-pink-400",
-  badge: "iOS & Android"
-}];
-
+  {
+    id: "internship",
+    icon: GraduationCap,
+    title: "Internships",
+    desc: "1-month immersive programs with real-world projects, mentorship, and verified experience certificates.",
+    color: "from-yellow-500/20 to-yellow-600/5",
+    accent: "text-yellow-400",
+    badge: "Limited Seats"
+  },
+  {
+    id: "training",
+    icon: BookOpen,
+    title: "Industrial Training",
+    desc: "Online classes, study notes, project-based learning, and certificates recognized by industry.",
+    color: "from-blue-500/20 to-blue-600/5",
+    accent: "text-blue-400",
+    badge: "Online Classes"
+  },
+  {
+    id: "websites",
+    icon: Globe,
+    title: "Ready-made Websites",
+    desc: "Pre-built, professionally designed websites ready to deploy for your business needs.",
+    color: "from-green-500/20 to-green-600/5",
+    accent: "text-green-400",
+    badge: "Instant Deploy"
+  },
+  {
+    id: "custom-websites",
+    icon: Code2,
+    title: "Custom Websites",
+    desc: "Order-based web development tailored to your exact requirements and brand identity.",
+    color: "from-purple-500/20 to-purple-600/5",
+    accent: "text-purple-400",
+    badge: "Made to Order"
+  },
+  {
+    id: "ai-agents",
+    icon: Bot,
+    title: "AI Agents",
+    desc: "Build intelligent AI agents and automation systems to power your business workflows.",
+    color: "from-red-500/20 to-red-600/5",
+    accent: "text-red-400",
+    badge: "Cutting Edge"
+  },
+  {
+    id: "mobile-apps",
+    icon: Smartphone,
+    title: "Mobile Apps",
+    desc: "Cross-platform mobile applications built with modern tech stacks for iOS and Android.",
+    color: "from-pink-500/20 to-pink-600/5",
+    accent: "text-pink-400",
+    badge: "iOS & Android"
+  }
+];
 
 const CREDENTIALS = [
-{ label: "Government of India Registered Startup", icon: Building2 },
-{ label: "Recognized under Startup India", icon: Star },
-{ label: "Registered under MSME, Ministry of GoI", icon: Award }];
-
+  { label: "Government of India Registered Startup", icon: Building2 },
+  { label: "Recognized under Startup India", icon: Star },
+  { label: "Registered under MSME, Ministry of GoI", icon: Award }
+];
 
 const container = {
   hidden: { opacity: 0 },
@@ -84,6 +87,7 @@ const item = {
 
 export default function Index() {
   const navigate = useNavigate();
+  const generalUpdates = useQuery(api.content.listByService, { serviceId: "general" });
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -158,6 +162,31 @@ export default function Index() {
           </motion.div>
         </motion.div>
       </section>
+
+      {/* General / Site-wide updates */}
+      {generalUpdates && generalUpdates.length > 0 && (
+        <section className="relative z-10 px-4 py-12 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-10"
+          >
+            <h2 className="text-3xl font-black mb-2">
+              Latest <span className="text-primary">Notices & Updates</span>
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              Stay up-to-date with our latest announcements, offers, and posts
+            </p>
+          </motion.div>
+          
+          <div className="space-y-4">
+            {generalUpdates.map((item: any) => (
+              <UpdateCard key={item._id} item={item} onDelete={() => {}} showDelete={false} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Services */}
       <section id="services" className="relative z-10 px-4 py-20">
